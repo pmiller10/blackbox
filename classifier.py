@@ -12,12 +12,12 @@ class Classifier(object):
 
     @classmethod
     def preds(self, data, targets, cv):
-        #model = LogisticRegression()
+        model = LogisticRegression(C=1, penalty='l1', tol=0.01)
         #model = ExtraTreesClassifier()
         #model = RandomForestClassifier()
         #model = KNeighborsClassifier()
         #model = GradientBoostingClassifier()
-        model = Net(data, targets)
+        #model = Net(data, targets)
         model.fit(data, targets)
         preds = [model.predict(c) for c in cv]
         return preds

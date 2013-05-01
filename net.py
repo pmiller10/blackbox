@@ -1,7 +1,7 @@
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.datasets import ClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
-from pybrain.structure import SigmoidLayer, SoftmaxLayer
+from pybrain.structure import SigmoidLayer, SoftmaxLayer, TanhLayer
 
 class Net(object):
 
@@ -13,7 +13,7 @@ class Net(object):
             ds.addSample(d, t)
         ds._convertToOneOfMany()
         
-        net = buildNetwork(len(data[0]), 10, 5, ds.outdim, hiddenclass=SigmoidLayer, outclass=SoftmaxLayer)
+        net = buildNetwork(len(data[0]), 10, ds.outdim, hiddenclass=SigmoidLayer, outclass=SoftmaxLayer)
         trainer = BackpropTrainer(net, ds)
         for i in range(50):
             print trainer.train()
