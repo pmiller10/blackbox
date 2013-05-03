@@ -11,14 +11,14 @@ class Classifier(object):
 
     @classmethod
     def preds(self, data, targets, cv):
-        model = SVC(C=1, tol=0.001, degree=2, class_weight='auto', gamma=0.)
-        #model = LogisticRegression(C=1, penalty='l1', tol=0.01)
+        #model = SVC(C=1, tol=0.001, degree=2, class_weight='auto', gamma=0.)
+        model = LogisticRegression(C=1, penalty='l1', tol=0.01)
         #model = ExtraTreesClassifier()
         #model = RandomForestClassifier()
         #model = KNeighborsClassifier()
         #model = GradientBoostingClassifier()
         #model = Net(data, targets)
-        print model
+        print "Model: ", model
         model.fit(data, targets)
         preds = [model.predict(c) for c in cv]
         return preds
