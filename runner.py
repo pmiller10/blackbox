@@ -11,7 +11,7 @@ data, targets = Data.data()
 matrix = Preprocess.to_matrix(data)
 print matrix.shape
 matrix = Preprocess.scale(matrix)
-matrix = Preprocess.polynomial(matrix, 2)
+#matrix = Preprocess.polynomial(matrix, 2)
 print matrix.shape
 data = matrix.tolist()
 
