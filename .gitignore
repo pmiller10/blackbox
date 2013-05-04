@@ -35,5 +35,5 @@ nosetests.xml
 .pydevproject
 
 # log file
-out.txt
+*.txt
 nohup.out
