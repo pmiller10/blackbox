@@ -59,7 +59,7 @@ class DeepNetClassifier(BaseNet):
         if new:
             targets = [self._to_binary(t) for t in targets]
             end = 500
-            net = DNNRegressor(data[:end], targets[:end], [1875, 20, 9], hidden_layer="SigmoidLayer", final_layer="SigmoidLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
+            net = DNNRegressor(data[:end], targets[:end], [1875, 900, 400, 9], hidden_layer="SigmoidLayer", final_layer="SigmoidLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
             net = net.fit()
             ds = SupervisedDataSet(1875, 9)
             for i,d in enumerate(data):

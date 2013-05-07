@@ -37,3 +37,7 @@ nosetests.xml
 # log file
 *.txt
 nohup.out
+
+# large data files
+extra_unsupervised_data.csv
+extra_unsupervised_data.tgz

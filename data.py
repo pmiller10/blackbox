@@ -2,6 +2,7 @@ import re
 
 class Data(object):
 
+    unsup_file = "data/extra_unsupervised_data.csv"
     train_file = "data/train.csv"
     test_file = "data/test.csv"
 
@@ -18,3 +19,14 @@ class Data(object):
             f = [float(i) for i in line]
             floats.append(f)
         return floats, targets
+
+    @classmethod
+    def extra(self, data_file=unsup_file):
+        f = file(data_file, 'r')
+        lines = f.readlines()[1:1001] # remove header
+        lines = [re.sub("\r\n", '', line).split(',') for line in lines]
+        floats = []
+        for line in lines:
+            f = [float(i) for i in line]
+            floats.append(f)
+        return floats
