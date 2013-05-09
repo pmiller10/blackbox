@@ -26,7 +26,7 @@ class Data(object):
         lines = f.readlines()[1:] # remove header
         lines = [re.sub("\r\n", '', line).split(',') for line in lines]
         floats = []
-        for line in lines[:1000]:
+        for line in lines:
             f = [float(i) for i in line]
             floats.append(f)
         return floats

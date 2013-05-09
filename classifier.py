@@ -27,7 +27,8 @@ class Classifier(object):
         #model.means_ = np.array([np.array(data[targets == (i+1)]).mean(axis=0) for i in xrange(9)])
         #model.means = np.array([
         #model = SGDClassifier(alpha=1., epsilon=0.1, n_iter=10, penalty='l2', power_t=1.)
-        #model = SVC(C=10, tol=0.01, degree=2, class_weight='auto', gamma=0.)
+        #models.append(SVC(C=10, tol=0.01, degree=2, class_weight='auto', gamma=0.))
+        #weights.append(1.)
 
         #models.append(Cluster(data, extra, targets))
         #weights.append(1.)

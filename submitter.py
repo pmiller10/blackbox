@@ -12,16 +12,16 @@ def log(info):
 def submission(preds):
     out = ""
     for p in preds:
-        out += str(p[0]) + "\n"
+        out += str(p) + "\n"
     log(out)
 
 
 data, targets = Data.data()
-print len(data)
+print "training data: ", len(data)
 test = Data.test()
-print len(test)
+print "test data: ", len(test)
 data = data + test
-print len(data)
+print "all data: ", len(data)
 
 # preprocessing
 start = time()
