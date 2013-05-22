@@ -34,7 +34,7 @@ def log(info):
     f.close()
 
 data, targets = Data.data()
-extra = Data.extra()
+extra = Data.test()
 data = data + extra
 
 # preprocessing
