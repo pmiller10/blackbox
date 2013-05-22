@@ -28,7 +28,7 @@ start = time()
 matrix = BlackboxPreprocess.to_matrix(data)
 print matrix.shape
 matrix = BlackboxPreprocess.scale(matrix)
-matrix = BlackboxPreprocess.polynomial(matrix, 2)
+#matrix = BlackboxPreprocess.polynomial(matrix, 2)
 print matrix.shape
 data = matrix.tolist()
 

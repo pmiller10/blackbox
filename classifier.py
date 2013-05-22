@@ -16,7 +16,8 @@ class Classifier(object):
     @classmethod
     def preds(self, data, targets, cv, extra):
         models, weights = self.train(data, targets, cv, extra)
-        preds = self.vote(models, cv, weights)
+        #preds = self.vote(models, cv, weights)
+        preds = [models[0].predict(c) for c in cv]
         return preds
 
     @classmethod
@@ -36,8 +37,8 @@ class Classifier(object):
         #weights.append(1.)
         #models.append(model)
 
-        models.append(LogisticRegression(C=1.3, penalty='l1', tol=0.05)) # best performance around 0.4 without autoencoding
-        weights.append(1.)
+        #models.append(LogisticRegression(C=1.3, penalty='l1', tol=0.05)) # best performance around 0.4 without autoencoding
+        #weights.append(1.)
 
         #models.append(ExtraTreesClassifier())
         #weights.append(1.)
@@ -52,7 +53,8 @@ class Classifier(object):
         #weights.append(1.0)
 
         #model = Net(data, targets)
-        #model = DeepNetClassifier(data, targets, epochs=200, smoothing=20, new=True)
+        model = DeepNetClassifier(data, extra, targets, epochs=200, smoothing=20, new=True)
+        models.append(model)
         for m in models:
             m.fit(data, targets)
         return models, weights
