@@ -50,7 +50,7 @@ data = matrix.tolist()
 
 # split training and CV data
 cv_data, cv_targets = data[:500], targets[:500]
-data, targets, extra = data[:1000], targets, data[1000:]
+data, targets, extra = data[:1000], targets, data[2000:3000]
 
 # testing
 preds = Classifier.preds(data, targets, cv_data, extra)

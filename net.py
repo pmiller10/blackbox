@@ -4,6 +4,7 @@ from pybrain.datasets import ClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.structure import SigmoidLayer, SoftmaxLayer, TanhLayer
 from my_pickle import save, load
+from score import score
 
 # DNN
 import sys
@@ -54,26 +55,34 @@ class Net(BaseNet):
 class DeepNetClassifier(BaseNet):
 
     filename_out = "data/net.txt"
-    filename_in = "data/600_200_70_hidden_200_epochs_20_smoothing_2000_examples.txt"
-    #filename_in = "data/900_and_400_hidden_200_epochs_and_40_smoothing_1000_examples.txt"
+    #filename_in = "data/600_200_70_hidden_200_epochs_20_smoothing_2000_examples.txt" # score of 0.21 on test set
+    #filename_in = "data/900_and_400_hidden_200_epochs_and_40_smoothing_1000_examples.txt" # score of 0.35 on test set
+    #filename_in = "data/900_and_400_hidden_200_epochs_and_100_smoothing_500_examples.txt"
+    filename_in = "data/600_200_70_hidden_200_epochs_and_20_smoothing_scaled.txt"
     #filename_in = "data/500_hidden_200_epochs_and_20_smoothing_2000_examples_squared.txt" # score of 0.27 test set
 
-    def __init__(self, data, extra, targets, epochs=1, smoothing=1, new=True):
+    def __init__(self, data, extra, targets, layers, epochs=1, smoothing=1, new=True):
         if new:
-            targets = [self._to_binary(t) for t in targets]
+            binary_targets = [self._to_binary(t) for t in targets] # not used anymore
+            class_targets = [str(int(t[0]) - 1) for t in targets] # for pybrain's classification datset
             print "...training the DNNRegressor"
-            net = DNNRegressor(data, extra, targets, [len(data[0]), 600, 200, 70, 9], hidden_layer="SigmoidLayer", final_layer="SigmoidLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
+            net = DNNRegressor(data, extra, class_targets, layers, hidden_layer="SigmoidLayer", final_layer="SoftmaxLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
             print "...running net.fit()"
             net = net.fit()
-            ds = SupervisedDataSet(len(data[0]), 9)
+            #ds = SupervisedDataSet(layers[0], layers[-1])
+            ds = ClassificationDataSet(len(data[0]), 1, nb_classes=9)
             for i,d in enumerate(data):
-                t = targets[i]
+                t = class_targets[i]
                 ds.addSample(d, t)
-            trainer = BackpropTrainer(net, ds)
+            ds._convertToOneOfMany()
+            trainer = BackpropTrainer(net, ds, verbose=True)
             print "...smoothing for epochs: ", smoothing
             for i in range(smoothing):
                 trainer.train()
-            self.model = net
+                self.model = net
+                preds = [self.predict(d) for d in data]
+                s = score(preds, targets, debug=False)
+                print "Score at epoch ", (i+1), ': ', s
             print "...saving the model"
             save(self.filename_out, net)
         else:

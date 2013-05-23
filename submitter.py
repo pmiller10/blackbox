@@ -3,6 +3,8 @@ from classifier import Classifier
 from score import score
 from time import time
 from blackbox_preprocess import BlackboxPreprocess
+from sklearn import preprocessing
+
 
 def log(info):
     f = file('submission.txt', 'w+')
@@ -29,6 +31,8 @@ matrix = BlackboxPreprocess.to_matrix(data)
 print matrix.shape
 matrix = BlackboxPreprocess.scale(matrix)
 #matrix = BlackboxPreprocess.polynomial(matrix, 2)
+matrix = preprocessing.normalize(matrix, norm='l2')
+matrix = BlackboxPreprocess.norm(matrix)
 print matrix.shape
 data = matrix.tolist()
 

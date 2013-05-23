@@ -53,7 +53,7 @@ class Classifier(object):
         #weights.append(1.0)
 
         #model = Net(data, targets)
-        model = DeepNetClassifier(data, extra, targets, epochs=200, smoothing=20, new=True)
+        model = DeepNetClassifier(data, extra, targets, [len(data[0]), 600, 200, 9], epochs=10, smoothing=60, new=True)
         models.append(model)
         for m in models:
             m.fit(data, targets)
