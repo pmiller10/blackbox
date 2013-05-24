@@ -44,7 +44,9 @@ print "(examples, dimensions): ", matrix.shape
 matrix = BlackboxPreprocess.scale(matrix)
 #matrix = BlackboxPreprocess.polynomial(matrix, 2)
 matrix = preprocessing.normalize(matrix, norm='l2')
-matrix = BlackboxPreprocess.norm(matrix)
+min_max_scaler = preprocessing.MinMaxScaler(feature_range=(-1.,1.))
+matrix = min_max_scaler.fit_transform(matrix)
+#matrix = BlackboxPreprocess.norm(matrix)
 print "(examples, dimensions): ", matrix.shape
 data = matrix.tolist()
 
