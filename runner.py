@@ -44,18 +44,18 @@ print "(examples, dimensions): ", matrix.shape
 matrix = BlackboxPreprocess.scale(matrix)
 #matrix = BlackboxPreprocess.polynomial(matrix, 2)
 matrix = preprocessing.normalize(matrix, norm='l2')
-min_max_scaler = preprocessing.MinMaxScaler(feature_range=(-1.,1.))
+min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0.,1.))
 matrix = min_max_scaler.fit_transform(matrix)
 #matrix = BlackboxPreprocess.norm(matrix)
 print "(examples, dimensions): ", matrix.shape
 data = matrix.tolist()
 
 # split training and CV data
-cv_data, cv_targets = data[:500], targets[:500]
-data, targets, extra = data[:1000], targets, data[1000:]
+cv_data, cv_targets = data[500:1000], targets[500:]
+data, targets, extra = data[:500], targets[:500], data[1000:]
 
 # testing
-preds = Classifier.preds(data, targets, cv_data, extra)
+preds = Classifier.preds(data, targets, cv_data, cv_targets, extra)
 s = score(preds, cv_targets, debug=False)
 print "Score: ", s
 log(s)

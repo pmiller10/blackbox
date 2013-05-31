@@ -63,24 +63,26 @@ class DeepNetClassifier(BaseNet):
     #filename_in = "data/500_hidden_200_epochs_and_20_smoothing_2000_examples_squared.txt" # score of 0.27 test set
     #filename_in = "data/600_200_hidden_10_compression_60_smoothing_1000_examples_score_52.txt" # score of 34.7 test set
 
-    def __init__(self, data, extra, targets, layers, epochs=1, smoothing=1, new=True, filename_in=False):
+    def __init__(self, data, targets, cv_data, cv_targets, extra, layers, epochs=1, smoothing=1, new=True, filename_in=False):
+        
+        if len(cv_data) != len(cv_targets): raise Exception("Number of CV data and CV targets must be equal")
+        if len(data) != len(targets): raise Exception("Number of data and targets must be equal")
+
         if new:
-            class_targets = [str(int(t[0]) - 1) for t in targets] # for pybrain's classification datset
-            ###  TODO testing only ###
-            tr_data, cv_data = data[:500], data[500:]
-            tr_targets, cv_targets = targets[:500], targets[500:]
-            class_tr_targets, class_cv_targets = class_targets[:500], class_targets[500:]
-            ###  TODO testing only ###
+            class_tr_targets = [str(int(t[0]) - 1) for t in targets] # for pybrain's classification datset
             print "...training the DNNRegressor"
-            # TODO use the cv data for compression, since that's what you'll be doing in testing
-            net = DNNRegressor(tr_data, cv_data, class_tr_targets, layers, hidden_layer="TanhLayer", final_layer="SoftmaxLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
+            net = DNNRegressor(data, extra, class_tr_targets, layers, hidden_layer="SigmoidLayer", final_layer="SoftmaxLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
             print "...running net.fit()"
             net = net.fit()
-            #ds = SupervisedDataSet(layers[0], layers[-1])
             ds = ClassificationDataSet(len(data[0]), 1, nb_classes=9)
-            noisy, _ = self.dropout(tr_data, noise=0.2, debug=True)
+            bag = 2
+            noisy, _ = self.dropout(data, noise=0.2, bag=bag, debug=True)
+            bagged_targets = []
+            for t in class_tr_targets:
+                for b in range(bag):
+                    bagged_targets.append(t)
             for i,d in enumerate(noisy):
-                t = class_tr_targets[i]
+                t = bagged_targets[i]
                 ds.addSample(d, t)
             ds._convertToOneOfMany()
 
@@ -88,9 +90,9 @@ class DeepNetClassifier(BaseNet):
             self.model = net
             preds = [self.predict(d) for d in cv_data]
             cv = score(preds, cv_targets, debug=False)
-            preds = [self.predict(d) for d in tr_data]
-            tr = score(preds, tr_targets, debug=False)
-            trainer = BackpropTrainer(net, ds, verbose=True)
+            preds = [self.predict(d) for d in data]
+            tr = score(preds, targets, debug=False)
+            trainer = BackpropTrainer(net, ds, verbose=True, learningrate=0.001, weightdecay=0.1)
             print "Train score before training: ", tr
             print "CV score before training: ", cv
             for i in range(smoothing):
@@ -98,8 +100,8 @@ class DeepNetClassifier(BaseNet):
                 self.model = net
                 preds = [self.predict(d) for d in cv_data]
                 cv = score(preds, cv_targets, debug=False)
-                preds = [self.predict(d) for d in tr_data]
-                tr = score(preds, tr_targets, debug=False)
+                preds = [self.predict(d) for d in data]
+                tr = score(preds, targets, debug=False)
                 print "Train score at epoch ", (i+1), ': ', tr
                 print "CV score at epoch ", (i+1), ': ', cv
                 #if i == 1:
