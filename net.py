@@ -75,7 +75,7 @@ class DeepNetClassifier(BaseNet):
             print "...running net.fit()"
             net = net.fit()
             ds = ClassificationDataSet(len(data[0]), 1, nb_classes=9)
-            bag = 2
+            bag = 1
             noisy, _ = self.dropout(data, noise=0.2, bag=bag, debug=True)
             bagged_targets = []
             for t in class_tr_targets:
@@ -92,7 +92,7 @@ class DeepNetClassifier(BaseNet):
             cv = score(preds, cv_targets, debug=False)
             preds = [self.predict(d) for d in data]
             tr = score(preds, targets, debug=False)
-            trainer = BackpropTrainer(net, ds, verbose=True, learningrate=0.001, weightdecay=0.1)
+            trainer = BackpropTrainer(net, ds, verbose=True, learningrate=0.005, weightdecay=0.7)
             print "Train score before training: ", tr
             print "CV score before training: ", cv
             for i in range(smoothing):
