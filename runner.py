@@ -37,9 +37,9 @@ psuedo = "data/pseudo_labels.csv"
 data, targets = Data.data()
 print len(data)
 print len(data[0])
-psuedo_data, psuedo_targets = Data.data(psuedo)
-data = data + psuedo_data
-targets = targets + psuedo_targets
+#psuedo_data, psuedo_targets = Data.data(psuedo)
+#data = data + psuedo_data
+#targets = targets + psuedo_targets
 
 # preprocessing
 start = time()
@@ -48,17 +48,18 @@ print len(data[-1])
 matrix = BlackboxPreprocess.to_matrix(data)
 print "(examples, dimensions): ", matrix.shape
 matrix = BlackboxPreprocess.scale(matrix)
-#matrix = BlackboxPreprocess.polynomial(matrix, 2)
-matrix = preprocessing.normalize(matrix, norm='l2')
-min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0.,1.))
-matrix = min_max_scaler.fit_transform(matrix)
+matrix = BlackboxPreprocess.polynomial(matrix, 2)
+#matrix = preprocessing.normalize(matrix, norm='l2')
+#min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0.,1.))
+#matrix = min_max_scaler.fit_transform(matrix)
 #matrix = BlackboxPreprocess.norm(matrix)
 print "(examples, dimensions): ", matrix.shape
 data = matrix.tolist()
 
 # split training and CV data
 cv_data, cv_targets = data[:500], targets[:500]
-data, targets = data[500:], targets[500:]
+#data, targets = data[500:], targets[500:] # include extra data
+data, targets = data[500:1000], targets[500:1000] # don't include extra data
 extra = data
 
 # testing

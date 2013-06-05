@@ -26,7 +26,7 @@ class Classifier(object):
     def train(self, data, targets, cv, cv_targets, extra):
         models = []
         weights = []
-        model = DeepNetClassifier(data, targets, cv, cv_targets, extra, [len(data[0]), 600, 200, 9], epochs=10, smoothing=10, new=True)
+        model = DeepNetClassifier(data, targets, cv, cv_targets, extra, [len(data[0]), 9], epochs=0, smoothing=200, new=True)
         models.append(model)
         weights.append(1.)
 

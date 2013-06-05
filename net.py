@@ -71,12 +71,16 @@ class DeepNetClassifier(BaseNet):
         if new:
             class_tr_targets = [str(int(t[0]) - 1) for t in targets] # for pybrain's classification datset
             print "...training the DNNRegressor"
-            net = DNNRegressor(data, extra, class_tr_targets, layers, hidden_layer="SigmoidLayer", final_layer="SoftmaxLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
-            print "...running net.fit()"
-            net = net.fit()
+            if len(layers) > 2:
+                net = DNNRegressor(data, extra, class_tr_targets, layers, hidden_layer="SigmoidLayer", final_layer="SoftmaxLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
+                print "...running net.fit()"
+                net = net.fit()
+            elif len(layers) == 2:
+                net = buildNetwork(layers[0], layers[-1], outclass=SoftmaxLayer, bias=True)
+
             ds = ClassificationDataSet(len(data[0]), 1, nb_classes=9)
             bag = 1
-            noisy, _ = self.dropout(data, noise=0.2, bag=bag, debug=True)
+            noisy, _ = self.dropout(data, noise=0.0, bag=bag, debug=True)
             bagged_targets = []
             for t in class_tr_targets:
                 for b in range(bag):
@@ -92,7 +96,7 @@ class DeepNetClassifier(BaseNet):
             cv = score(preds, cv_targets, debug=False)
             preds = [self.predict(d) for d in data]
             tr = score(preds, targets, debug=False)
-            trainer = BackpropTrainer(net, ds, verbose=True, learningrate=0.005, weightdecay=0.7)
+            trainer = BackpropTrainer(net, ds, verbose=True, learningrate=0.0008, momentum=0.04, weightdecay=0.05) # best score 0.39 after 200 epochs with lr=0.0008, weightdecay=0.04, momentum=0.04
             print "Train score before training: ", tr
             print "CV score before training: ", cv
             for i in range(smoothing):
@@ -102,8 +106,7 @@ class DeepNetClassifier(BaseNet):
                 cv = score(preds, cv_targets, debug=False)
                 preds = [self.predict(d) for d in data]
                 tr = score(preds, targets, debug=False)
-                print "Train score at epoch ", (i+1), ': ', tr
-                print "CV score at epoch ", (i+1), ': ', cv
+                print "Train/CV score at epoch ", (i+1), ': ', tr, '/', cv
                 #if i == 1:
                     #print "...saving the model"
                     #save("data/1000_ex_4_hidden/net_epoch_1.txt", net)
