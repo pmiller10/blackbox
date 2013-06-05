@@ -71,8 +71,8 @@ class DeepNetClassifier(BaseNet):
         if new:
             class_tr_targets = [str(int(t[0]) - 1) for t in targets] # for pybrain's classification datset
             print "...training the DNNRegressor"
-            if len(layers) > 2:
-                net = DNNRegressor(data, extra, class_tr_targets, layers, hidden_layer="SigmoidLayer", final_layer="SoftmaxLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
+            if len(layers) > 2: # TODO testing only
+                net = DNNRegressor(data, extra, class_tr_targets, layers, hidden_layer="TanhLayer", final_layer="SoftmaxLayer", compression_epochs=epochs, bias=True, autoencoding_only=False)
                 print "...running net.fit()"
                 net = net.fit()
             elif len(layers) == 2:
@@ -96,7 +96,7 @@ class DeepNetClassifier(BaseNet):
             cv = score(preds, cv_targets, debug=False)
             preds = [self.predict(d) for d in data]
             tr = score(preds, targets, debug=False)
-            trainer = BackpropTrainer(net, ds, verbose=True, learningrate=0.0008, momentum=0.04, weightdecay=0.05) # best score 0.39 after 200 epochs with lr=0.0008, weightdecay=0.04, momentum=0.04
+            trainer = BackpropTrainer(net, ds, verbose=True, learningrate=0.0008, momentum=0.04, weightdecay=0.05) # best score 0.398 after 50 compression epochs and 200 epochs with lr=0.0008, weightdecay=0.05, momentum=0.04. Used dropout of 0.2 in compression, 0.5 in softmax pretraining, and no dropout in smoothing.
             print "Train score before training: ", tr
             print "CV score before training: ", cv
             for i in range(smoothing):
